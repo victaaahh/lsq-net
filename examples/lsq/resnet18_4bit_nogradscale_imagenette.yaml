@@ -3,7 +3,7 @@ name: ResNet18_4bit
 
 device:
   type: cuda
-  gpu: [0, 1]
+  gpu: [0, 1, 2, 3]
 
 # Dataset loader
 dataloader:
