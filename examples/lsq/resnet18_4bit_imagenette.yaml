@@ -119,7 +119,7 @@ lr_scheduler:
   # Cosine annealing
   mode: cos
   lr_min: 0.000001
-  cycle: 45
+  cycle: 90
 
   # Cosine annealing with warm restarts
   # mode: cos_warm_restarts
