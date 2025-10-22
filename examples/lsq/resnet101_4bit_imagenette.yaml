@@ -20,7 +20,7 @@ dataloader:
 
 resume:
   # Path to a checkpoint to be loaded. Leave blank to skip
-  path: /work/ImageNet/lsq-net/out/ResNet18_full_20251019-162533/ResNet18_full_checkpoint.pth.tar
+  path: /path/to/resnet101full/checkpoint
   # Resume model parameters only
   lean: true
 
