@@ -1,3 +1,13 @@
+# This is a fork of an Implementation of LSQ by [zhutmost](https://github.com/zhutmost) adapted for an assignment in ATDL
+We use a slightly different environment setup and also made a few changes to the code. An enviroment similar to ours can be set up using MicroMamba:
+```bash
+micromamba create --yes --name lsq python=3.10
+micromamba run -n lsq pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+micromamba install -n lsq tensorboard
+micromamba install -n lsq scikit-learn pyyaml munch
+```
+
+# The original README follows:
 # LSQ-Net: Learned Step Size Quantization
 
 ## Introduction
@@ -12,7 +22,7 @@ If this repository is helpful to you, please star it.
 ## Results and Models
 
 Here are some experiment results.
-We will release more quantized models with different configurations soon. 
+We will release more quantized models with different configurations soon.
 
 All these models can be downloaded from [Dropbox](https://www.dropbox.com/sh/un1k74qael1k6mx/AADroPMhvCrd1szG6HUYO_N3a?dl=0).
 
@@ -54,7 +64,7 @@ You can find some example configuration files in the [example](examples) folder.
 ## Implementation Differences From the Original Paper
 
 LSQ-Net paper has two versions, [v1](https://arxiv.org/pdf/1902.08153v2.pdf) and [v2](https://arxiv.org/pdf/1902.08153v1.pdf).
-To improve accuracy, the authors expanded the quantization space in the v2 version. 
+To improve accuracy, the authors expanded the quantization space in the v2 version.
 Recently they released a new version [v3](https://arxiv.org/pdf/1902.08153v3.pdf), which fixed some typos in the v2 version.
 
 My implementation generally follows the v2 version, except for the following points.
@@ -68,11 +78,11 @@ In my implementation, the step sizes in weight quantization layers are initializ
 ### Supported Models
 
 Currently, only ResNet is supported.
-For the ImageNet dataset, the ResNet-18/34/50/101/152 models are copied from the torchvision model zoo. 
+For the ImageNet dataset, the ResNet-18/34/50/101/152 models are copied from the torchvision model zoo.
 For the CIFAR10 dataset, the models are modified based on [Yerlan Idelbayev's contribution](https://github.com/akamaster/pytorch_resnet_cifar10), including ResNet-20/32/44/56/110/1202.
 
 Thanks to the non-invasive nature of the framework, it is easy to add another new architectures beside ResNet.
-All you need is to paste your model code into the `model` folder, and then add a corresponding entry in the `model/model.py`. 
+All you need is to paste your model code into the `model` folder, and then add a corresponding entry in the `model/model.py`.
 The quantization framework will automatically replace layers specified in `quan/func.py` with their quantized versions automatically.
 
 ## Contributing Guide
