@@ -1,5 +1,5 @@
 # Experiment name
-name: ResNet18_8bit
+name: ResNet18_3bit
 
 device:
   type: cuda
