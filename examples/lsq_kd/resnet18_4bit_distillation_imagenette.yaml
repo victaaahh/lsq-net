@@ -132,8 +132,10 @@ kd:
   enable: false
   scheme: "A"                 # "A", "B", or "C" for each scheme in Mishra et al. 2017
   teacher_checkpoint: ""      # path, used for B and C, maybe optionally A too
-  teacher_arch: "resnet50"    # optional, depending if we want to distill to a different size network
-  alpha: 1.0                  # weight for classification CE term
-  beta: 1.0                   # weight for distillation term
+  arch: "resnet50"            # teacher architecture, depending if we want to distill to a different size network
+  pre_trained: true           # if the model should use the pytorch pretrained weights on imagenet
+  alpha: 1.0                  # weight for teacher loss term
+  beta: 1.0                   # weight for student loss term
+  gamma: 1.0                  # weight for distillation loss term
   temperature: 1.0            # distillation temperature (default 1)
                               # The distillation loss is cross-entropy with variation depending on scheme
