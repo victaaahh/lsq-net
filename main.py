@@ -70,20 +70,32 @@ def main():
 
     if args.kd.enable:
         teacher_model = create_model(args.kd)
+        student_model = model
+        model = KDModel(teacher_model, student_model, args.kd.scheme)
+
+    start_epoch = 0
+    if args.resume.path and (not args.kd.enable or args.kd.resume_training):
+        model, start_epoch, _ = util.load_checkpoint(
+            model, args.resume.path, lean=args.resume.lean
+        )
+    elif args.kd.enable and not args.kd.resume_training:
+        if args.resume.path:
+            student_model, _, _ = util.load_checkpoint(
+                student_model, args.resume_path, lean=True
+            )
+        if args.kd.teacher_checkpoint:
+            teacher_model, _, _ = util.load_checkpoint(
+                teacher_model, args.kd.teacher_checkpoint, lean=True
+            )
         model = KDModel(teacher_model, model, args.kd.scheme)
 
     if args.device.gpu and not args.dataloader.serialized:
         model = t.nn.DataParallel(model, device_ids=args.device.gpu)
+        dataparallel = True
+    else:
+        dataparallel = False
 
     model.to(args.device.type)
-
-    start_epoch = 0
-    if args.resume.path and not args.kd.enable:
-        model, start_epoch, _ = util.load_checkpoint(
-            model, args.resume.path, args.device.type, lean=args.resume.lean
-        )
-    elif args.kd.enable:
-        raise NotImplementedError
 
     # Define loss function (criterion) and optimizer
     if args.kd.enable:
@@ -156,6 +168,7 @@ def main():
                 is_best,
                 args.name,
                 log_dir,
+                dataparallel,
             )
 
         logger.info(">>>>>>>> Epoch -1 (final model evaluation)")

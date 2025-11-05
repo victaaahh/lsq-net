@@ -1,5 +1,6 @@
 import logging
 import os
+from collections import OrderedDict
 
 import torch as t
 
@@ -7,7 +8,14 @@ logger = logging.getLogger()
 
 
 def save_checkpoint(
-    epoch, arch, model, extras=None, is_best=None, name=None, output_dir="."
+    epoch,
+    arch,
+    model,
+    extras=None,
+    is_best=None,
+    name=None,
+    output_dir=".",
+    dataparallel=False,
 ):
     """Save a pyTorch training checkpoint
     Args:
@@ -33,9 +41,16 @@ def save_checkpoint(
     filename_best = "best.pth.tar" if name is None else name + "_best.pth.tar"
     filepath_best = os.path.join(output_dir, filename_best)
 
+    if dataparallel:
+        state_dict = OrderedDict()
+        for k, v in model.state_dict().items():
+            state_dict[k[7:]] = v
+    else:
+        state_dict = model.state_dict()
+
     checkpoint = {
         "epoch": epoch,
-        "state_dict": model.state_dict(),
+        "state_dict": state_dict,
         "arch": arch,
         "extras": extras,
     }
@@ -49,7 +64,7 @@ def save_checkpoint(
     logger.info(msg)
 
 
-def load_checkpoint(model, chkp_file, model_device=None, strict=False, lean=False):
+def load_checkpoint(model, chkp_file, strict=False, lean=False):
     """Load a pyTorch training checkpoint.
     Args:
         model: the pyTorch model to which we will load the parameters.  You can
@@ -58,8 +73,6 @@ def load_checkpoint(model, chkp_file, model_device=None, strict=False, lean=Fals
         kept this way for backward compatibility.
         chkp_file: the checkpoint file
         lean: if set, read into model only 'state_dict' field
-        model_device [str]: if set, call model.to($model_device)
-                This should be set to either 'cpu' or 'cuda'.
     :returns: updated model, optimizer, start_epoch
     """
     if not os.path.isfile(chkp_file):
@@ -96,9 +109,6 @@ def load_checkpoint(model, chkp_file, model_device=None, strict=False, lean=Fals
                 "The loaded checkpoint (%s) is missing %d state keys, but they are all step sizes"
                 % (chkp_file, len(missing_keys))
             )
-
-    if model_device is not None:
-        model.to(model_device)
 
     if lean:
         logger.info(
