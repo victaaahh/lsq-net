@@ -49,7 +49,11 @@ def train(
         targets = targets.to(args.device.type)
 
         outputs = model(inputs)
-        loss = criterion(outputs, targets)
+        if args.kd.enable:
+            teacher_outputs, outputs = outputs
+            loss = criterion(outputs, teacher_outputs, targets)
+        else:
+            loss = criterion(outputs, targets)
 
         acc1, acc5 = accuracy(outputs.data, targets.data, topk=(1, 5))
         losses.update(loss.item(), inputs.size(0))
@@ -108,7 +112,11 @@ def validate(data_loader, model, criterion, epoch, monitors, args):
             targets = targets.to(args.device.type)
 
             outputs = model(inputs)
-            loss = criterion(outputs, targets)
+            if args.kd.enable:
+                teacher_outputs, outputs = outputs
+                loss = criterion(outputs, teacher_outputs, targets)
+            else:
+                loss = criterion(outputs, targets)
 
             acc1, acc5 = accuracy(outputs.data, targets.data, topk=(1, 5))
             losses.update(loss.item(), inputs.size(0))

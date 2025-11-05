@@ -7,7 +7,7 @@ import yaml
 import process
 import quan
 import util
-from model import create_model
+from model import create_model, KDModel
 
 
 def main():
@@ -68,19 +68,30 @@ def main():
     )
     logger.info("Inserted quantizers into the original model")
 
+    if args.kd.enable:
+        teacher_model = create_model(args.kd)
+        model = KDModel(teacher_model, model, args.kd.scheme)
+
     if args.device.gpu and not args.dataloader.serialized:
         model = t.nn.DataParallel(model, device_ids=args.device.gpu)
 
     model.to(args.device.type)
 
     start_epoch = 0
-    if args.resume.path:
+    if args.resume.path and not args.kd.enable:
         model, start_epoch, _ = util.load_checkpoint(
             model, args.resume.path, args.device.type, lean=args.resume.lean
         )
+    elif args.kd.enable:
+        raise NotImplementedError
 
     # Define loss function (criterion) and optimizer
-    criterion = t.nn.CrossEntropyLoss().to(args.device.type)
+    if args.kd.enable:
+        criterion = util.MishraDistiller(
+            args.kd.alpha, args.kd.beta, args.kd.gamma, args.kd.temperature
+        ).to(args.device.type)
+    else:
+        criterion = t.nn.CrossEntropyLoss().to(args.device.type)
 
     # optimizer = t.optim.Adam(model.parameters(), lr=args.optimizer.learning_rate)
     optimizer = t.optim.SGD(
