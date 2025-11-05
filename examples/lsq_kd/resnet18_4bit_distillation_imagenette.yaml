@@ -129,9 +129,10 @@ lr_scheduler:
   # amp_scale: 0.5
 
 kd:
-  enable: false
+  enable: true
   scheme: "A"                 # "A", "B", or "C" for each scheme in Mishra et al. 2017
-  teacher_checkpoint: ""      # path, used for B and C, maybe optionally A too
+  resume_training: false
+  teacher_checkpoint:         # path, used for B and C, maybe optionally A too
   arch: "resnet50"            # teacher architecture, depending if we want to distill to a different size network
   pre_trained: true           # if the model should use the pytorch pretrained weights on imagenet
   alpha: 1.0                  # weight for teacher loss term
