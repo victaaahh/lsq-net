@@ -20,7 +20,7 @@ dataloader:
 
 resume:
   # Path to a checkpoint to be loaded. Leave blank to skip
-  path: /work/ImageNet/lsq-net/out/ResNet18_full_20251019-162533/ResNet18_full_checkpoint.pth.tar
+  path:
   # Resume model parameters only
   lean: true
 
@@ -128,13 +128,14 @@ lr_scheduler:
   # cycle_scale: 2
   # amp_scale: 0.5
 
-  # The distillation loss is cross-entropy with variation depending on scheme
 kd:
   enable: true
-  scheme: "A" # "A", "B", or "C" for each scheme in Mishra et al. 2017
+  freeze_teacher: false
   resume_training: false
   teacher_checkpoint: # path, used for B and C, maybe optionally A too
-  arch: "resnet50" # teacher architecture, depending if we want to distill to a different size network
+  arch: "resnet18" # teacher architecture, depending if we want to distill to a different size network
+  dataloader:
+    dataset: imagenet
   pre_trained: true # if the model should use the pytorch pretrained weights on imagenet
   alpha: 1.0 # weight for teacher loss term
   beta: 1.0 # weight for student loss term
