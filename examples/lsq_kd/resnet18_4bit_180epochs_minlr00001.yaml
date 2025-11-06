@@ -1,5 +1,5 @@
 # Experiment name
-name: ResNet18_4bit_180epochs_lr01_minlr00001
+name: ResNet18_4bit_180epochs_lr00001
 
 device:
   type: cuda
@@ -118,7 +118,7 @@ lr_scheduler:
 
   # Cosine annealing
   mode: cos
-  lr_min: 0.00001
+  lr_min: 0.0001
   cycle: 180
 
   # Cosine annealing with warm restarts
@@ -130,13 +130,3 @@ lr_scheduler:
 
 kd:
   enable: false
-  scheme: "A" # "A", "B", or "C" for each scheme in Mishra et al. 2017
-  teacher_checkpoint: # path, used for B and C, maybe optionally A too
-  arch: "resnet50" # teacher architecture, depending if we want to distill to a different size network
-  pre_trained: true # if the model should use the pytorch pretrained weights on imagenet
-  alpha: 1.0 # weight for teacher loss term
-  beta: 1.0 # weight for student loss term
-  gamma: 1.0 # weight for distillation loss term
-  temperature:
-    1.0 # distillation temperature (default 1)
-    # The distillation loss is cross-entropy with variation depending on scheme
