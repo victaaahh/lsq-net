@@ -2,10 +2,10 @@ import torch.nn as nn
 
 
 class KDModel(nn.Module):
-    def __init__(self, teacher, student, scheme):
+    def __init__(self, teacher, student, freeze_teacher):
         super().__init__()
         self.teacher = teacher
-        if scheme == "B" or scheme == "C":
+        if freeze_teacher:
             self.teacher.requires_grad = False
         self.student = student
 
