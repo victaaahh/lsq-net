@@ -1,5 +1,5 @@
 # Experiment name
-name: ResNet18_full_big_data
+name: ResNet56_full_imagenette
 
 device:
   type: cuda
@@ -32,7 +32,7 @@ resume:
 #     resnet18, resnet34, resnet50, resnet101, resnet152
 #   CIFAR10:
 #     resnet20, resnet32, resnet44, resnet56, resnet110, resnet1202
-arch: resnet18
+arch: resnet56
 
 # Use pre-trained model
 pre_trained: true
@@ -95,3 +95,6 @@ lr_scheduler:
   # cycle: 5
   # cycle_scale: 2
   # amp_scale: 0.5
+
+kd:
+  enable: false
