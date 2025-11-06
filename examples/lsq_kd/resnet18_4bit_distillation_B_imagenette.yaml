@@ -138,7 +138,7 @@ kd:
     dataset: imagenet
   pre_trained: true # if the model should use the pytorch pretrained weights on imagenet
   alpha: 1.0 # weight for teacher loss term
-  beta: 1.0 # weight for student loss term
-  gamma: 1.0 # weight for distillation loss term
+  beta: 0.5 # weight for student loss term
+  gamma: 0.5 # weight for distillation loss term
   # distillation temperature (default 1)
   temperature: 1.0
