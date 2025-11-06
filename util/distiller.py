@@ -29,7 +29,8 @@ class MishraDistiller(nn.Module):
         p_A = F.log_softmax(student_logits / T, dim=1)
 
         # Cross entropy H(z_T, p_A)
-        # Note: Using KL divergence scaled by T^2 = gamma * T^2 * KL
-        loss_distill = F.kl_div(p_A, p_T, reduction="batchmean") * (T**2) * self.gamma
+        # Note: Using KL divergence scaled by T^2 = gamma * T^2 * KL, but KL is only equvalent for kd where the teacher is frozen.
+        # loss_distill = F.sum(p_A, p_T, reduction="batchmean") * (T**2) * self.gamma
+        loss_distill = -torch.sum(p_T * p_A, dim=1).mean() * (T**2) * self.gamma
 
         return loss_teacher + loss_student + loss_distill
