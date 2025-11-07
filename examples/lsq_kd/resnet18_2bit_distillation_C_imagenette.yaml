@@ -1,5 +1,5 @@
 # Experiment name
-name: ResNet18_4bit_distillation_scheme_C
+name: ResNet18_2bit_distillation_scheme_C
 
 device:
   type: cuda
@@ -44,7 +44,7 @@ quan:
     # Quantizer type (choices: lsq)
     mode: lsq
     # Bit width of quantized activation
-    bit: 4
+    bit: 2
     # Each output channel uses its own scaling factor
     per_channel: false
     # Whether to use symmetric quantization
@@ -57,7 +57,7 @@ quan:
     # Quantizer type (choices: lsq)
     mode: lsq
     # Bit width of quantized weight
-    bit: 4
+    bit: 2
     # Each output channel uses its own scaling factor
     per_channel: false
     # Whether to use symmetric quantization
@@ -90,7 +90,7 @@ epochs: 180
 optimizer:
   learning_rate: 0.01
   momentum: 0.9
-  weight_decay: 0.0001
+  weight_decay: 0.000025
 
 # Learning rate scheduler
 lr_scheduler:
@@ -118,7 +118,7 @@ lr_scheduler:
 
   # Cosine annealing
   mode: cos
-  lr_min: 0.0001
+  lr_min: 0.000001
   cycle: 180
 
   # Cosine annealing with warm restarts

@@ -1,5 +1,5 @@
 # Experiment name
-name: ResNet18_4bit_distillation_scheme_C
+name: ResNet18_2bit_distillation_scheme_A
 
 device:
   type: cuda
@@ -20,7 +20,7 @@ dataloader:
 
 resume:
   # Path to a checkpoint to be loaded. Leave blank to skip
-  path: /work/ImageNet/ResNet18_full_checkpoint_new.pth.tar
+  path:
   # Resume model parameters only
   lean: true
 
@@ -35,7 +35,7 @@ resume:
 arch: resnet18
 
 # Use pre-trained model
-pre_trained: true
+pre_trained: false
 
 #============================ Quantization =====================================
 
@@ -44,7 +44,7 @@ quan:
     # Quantizer type (choices: lsq)
     mode: lsq
     # Bit width of quantized activation
-    bit: 4
+    bit: 2
     # Each output channel uses its own scaling factor
     per_channel: false
     # Whether to use symmetric quantization
@@ -57,7 +57,7 @@ quan:
     # Quantizer type (choices: lsq)
     mode: lsq
     # Bit width of quantized weight
-    bit: 4
+    bit: 2
     # Each output channel uses its own scaling factor
     per_channel: false
     # Whether to use symmetric quantization
@@ -90,7 +90,7 @@ epochs: 180
 optimizer:
   learning_rate: 0.01
   momentum: 0.9
-  weight_decay: 0.0001
+  weight_decay: 0.000025
 
 # Learning rate scheduler
 lr_scheduler:
@@ -118,7 +118,7 @@ lr_scheduler:
 
   # Cosine annealing
   mode: cos
-  lr_min: 0.0001
+  lr_min: 0.000001
   cycle: 180
 
   # Cosine annealing with warm restarts
@@ -130,14 +130,15 @@ lr_scheduler:
 
 kd:
   enable: true
-  freeze_teacher: true
+  freeze_teacher: false
   resume_training: false
-  teacher_checkpoint: /work/ImageNet/ResNet18_full_checkpoint_new.pth.tar
+  teacher_checkpoint: # path, used for B and C, maybe optionally A too
   arch: "resnet18" # teacher architecture, depending if we want to distill to a different size network
   dataloader:
     dataset: imagenet
-  pre_trained: true # if the model should use the pytorch pretrained weights on imagenet
+  pre_trained: false # if the model should use the pytorch pretrained weights on imagenet
   alpha: 1.0 # weight for teacher loss term
   beta: 0.5 # weight for student loss term
   gamma: 0.5 # weight for distillation loss term
-  temperature: 1.0 # distillation temperature (default 1)
+  # distillation temperature (default 1)
+  temperature: 1.0
