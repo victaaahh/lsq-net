@@ -132,7 +132,7 @@ kd:
   enable: true
   freeze_teacher: true
   resume_training: false
-  teacher_checkpoint: # path, used for B and C, maybe optionally A too
+  teacher_checkpoint: /work/ImageNet/ResNet18_full_checkpoint_new.pth.tar
   arch: "resnet18" # teacher architecture, depending if we want to distill to a different size network
   dataloader:
     dataset: imagenet

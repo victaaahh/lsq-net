@@ -1,5 +1,5 @@
 # Experiment name
-name: ResNet18_4bit_distillation_scheme_A
+name: ResNet18_4bit_distillation_scheme_A_pretrained
 
 device:
   type: cuda
@@ -35,7 +35,7 @@ resume:
 arch: resnet18
 
 # Use pre-trained model
-pre_trained: false
+pre_trained: true
 
 #============================ Quantization =====================================
 
@@ -136,7 +136,7 @@ kd:
   arch: "resnet18" # teacher architecture, depending if we want to distill to a different size network
   dataloader:
     dataset: imagenet
-  pre_trained: false # if the model should use the pytorch pretrained weights on imagenet
+  pre_trained: true # if the model should use the pytorch pretrained weights on imagenet
   alpha: 1.0 # weight for teacher loss term
   beta: 0.5 # weight for student loss term
   gamma: 0.5 # weight for distillation loss term
