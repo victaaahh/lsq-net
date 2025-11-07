@@ -6,7 +6,8 @@ class KDModel(nn.Module):
         super().__init__()
         self.teacher = teacher
         if freeze_teacher:
-            self.teacher.requires_grad = False
+            for p in self.teacher.parameters():
+                p.requires_grad = False
         self.student = student
 
     def forward(self, x):
