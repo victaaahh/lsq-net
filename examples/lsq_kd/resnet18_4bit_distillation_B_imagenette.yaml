@@ -35,7 +35,7 @@ resume:
 arch: resnet18
 
 # Use pre-trained model
-pre_trained: true
+pre_trained: false
 
 #============================ Quantization =====================================
 
