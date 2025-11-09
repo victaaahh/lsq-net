@@ -1,0 +1,144 @@
+# Experiment name
+name: ResNet18_4bit_distillation_scheme_B_resnet50
+
+device:
+  type: cuda
+  gpu: [0, 1]
+
+# Dataset loader
+dataloader:
+  # Dataset to train/validate (choices: imagenet, cifar10)
+  dataset: imagenet
+  # Number of categories in the specified dataset (choices: 1000, 10)
+  num_classes: 10
+  # Path to dataset directory
+  path: /work/ImageNet/imagenette2
+  # Size of mini-batch
+  batch_size: 256
+  # Portion of training dataset to set aside for validation (range: [0, 1))
+  val_split: 0.
+
+resume:
+  # Path to a checkpoint to be loaded. Leave blank to skip
+  path:
+  # Resume model parameters only
+  lean: true
+
+#============================ Model ============================================
+
+# Supported model architecture
+# choices:
+#   ImageNet:
+#     resnet18, resnet34, resnet50, resnet101, resnet152
+#   CIFAR10:
+#     resnet20, resnet32, resnet44, resnet56, resnet110, resnet1202
+arch: resnet18
+
+# Use pre-trained model
+pre_trained: false
+
+#============================ Quantization =====================================
+
+quan:
+  act: # (default for all layers)
+    # Quantizer type (choices: lsq)
+    mode: lsq
+    # Bit width of quantized activation
+    bit: 4
+    # Each output channel uses its own scaling factor
+    per_channel: false
+    # Whether to use symmetric quantization
+    symmetric: false
+    # Quantize all the numbers to non-negative
+    all_positive: true
+    # Which gradient scaling to use (choices: full, weights, none)
+    grad_scale: full
+  weight: # (default for all layers)
+    # Quantizer type (choices: lsq)
+    mode: lsq
+    # Bit width of quantized weight
+    bit: 4
+    # Each output channel uses its own scaling factor
+    per_channel: false
+    # Whether to use symmetric quantization
+    symmetric: false
+    # Whether to quantize all the numbers to non-negative
+    all_positive: false
+    # Which gradient scaling to use (choices: full, weights, none)
+    grad_scale: full
+  excepts:
+    # Specify quantized bit width for some layers, like this:
+    conv1:
+      act:
+        bit: 8
+      weight:
+        bit: 8
+    fc:
+      act:
+        bit: 8
+      weight:
+        bit: 8
+
+#============================ Training / Evaluation ============================
+
+# Evaluate the model without training
+# If this field is true, all the bellowing options will be ignored
+eval: false
+
+epochs: 180
+
+optimizer:
+  learning_rate: 0.01
+  momentum: 0.9
+  weight_decay: 0.0001
+
+# Learning rate scheduler
+lr_scheduler:
+  # Update learning rate per batch or epoch
+  update_per_batch: true
+
+  # Uncomment one of bellowing options to activate a learning rate scheduling
+
+  # Fixed learning rate
+  # mode: fixed
+
+  # Step decay
+  # mode: step
+  # step_size: 30
+  # gamma: 0.1
+
+  # Multi-step decay
+  # mode: multi_step
+  # milestones: [30, 60, 90]
+  # gamma: 0.1
+
+  # Exponential decay
+  # mode: exp
+  # gamma: 0.95
+
+  # Cosine annealing
+  mode: cos
+  lr_min: 0.0001
+  cycle: 180
+
+  # Cosine annealing with warm restarts
+  # mode: cos_warm_restarts
+  # lr_min: 0
+  # cycle: 5
+  # cycle_scale: 2
+  # amp_scale: 0.5
+
+kd:
+  enable: true
+  freeze_teacher: true
+  resume_training: false
+  # The teacher_checkpoint is indeed a resnet50 and not a resnet56
+  teacher_checkpoint: /work/ImageNet/lsq-net/out/ResNet56_full_imagenette_20251107-113738/ResNet56_full_imagenette_checkpoint.pth.tar
+  arch: "resnet50" # teacher architecture, depending if we want to distill to a different size network
+  dataloader:
+    dataset: imagenet
+  pre_trained: true # if the model should use the pytorch pretrained weights on imagenet
+  alpha: 1.0 # weight for teacher loss term
+  beta: 0.5 # weight for student loss term
+  gamma: 0.5 # weight for distillation loss term
+  temperature: 1.0 # distillation temperature (default 1)
